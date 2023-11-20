@@ -1,12 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace Redis.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]/[action]")]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]
@@ -23,8 +22,8 @@ namespace Redis.Controllers
             _distributedCache = distributedCache;
         }
 
-        [HttpGet(Name = "GetWeatherForecast")]
-        public async Task<List<WeatherForecast>> Get()
+        [HttpGet]
+        public async Task<List<WeatherForecast>> SetAsync()
         {
             var value = Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
@@ -43,6 +42,14 @@ namespace Redis.Controllers
             List<WeatherForecast> result = JsonSerializer.Deserialize<List<WeatherForecast>>(serialize).ToList();
 
             return result;
+        }
+
+        [HttpGet]
+        public async ValueTask<IActionResult> GetAsync()
+        {
+            var result = await _distributedCache.GetStringAsync("Key");
+
+            return Ok(result);
         }
     }
 }
