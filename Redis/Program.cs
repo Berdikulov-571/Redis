@@ -9,8 +9,8 @@ namespace Redis
 
             builder.Services.AddStackExchangeRedisCache(options =>
             {
-                options.InstanceName = "local";
-                options.Configuration = "";
+                options.InstanceName = "Redis";
+                options.Configuration = "127.0.0.1:6379";
             });
 
             // Add services to the container.
